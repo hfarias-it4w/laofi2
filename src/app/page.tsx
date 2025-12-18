@@ -35,7 +35,7 @@ const heroImage = "/assets/ef4f6eb3143746c9fa2a3a07fe919842e92c98ac.png";
 const mapImage = "/assets/4e3ff1c2363ffb610f692c5a9c3936dc7ef76a1e.png";
 const logoPartners = [
   "/assets/a4dcd49e038abf0396bc0713086563430cc74b3b.png",
-  "/assets/e246b60348fdce321368209f3897d7f4741113c8.png",
+  "/assets/e246b60348fdce321368209f3897d7f4741113c8.png", 
   "/assets/4c465a6b513e7f549af5fd2327bc7a46d2d603a7.png",
   "/assets/536041cd5b491d20f950cc9e704e7740cb22e6a7.png",
   "/assets/0425ce4f6f05a49df1664f163a652d871a14d630.png",
@@ -79,7 +79,7 @@ export default function Home() {
         title: "Oficina privada",
         description:
           "Espacios equipados y listos para que tu equipo se enfoque en el negocio.",
-        image: "/assets/15c33a7e098e6e3c6236043dcc4e88b921f73834.png",
+        image: "/assets/oficina_privada.png",
         cta: "Reservar espacio",
         highlight: true,
       },
@@ -87,14 +87,14 @@ export default function Home() {
         title: "Espacio compartido",
         description:
           "Conectá con otras personas, trabajá con calma y activá nuevas oportunidades.",
-        image: "/assets/4e3ff1c2363ffb610f692c5a9c3936dc7ef76a1e.png",
+        image: "/assets/espacio_compartido.png",
         cta: "Ver detalles",
       },
       {
         title: "Salas y eventos",
         description:
           "Workshops, reuniones y presentaciones con equipamiento premium.",
-        image: "/assets/d8ebc217c03292b30ef25380969390c7a504a59b.png",
+        image: "/assets/sala_reuniones_eventos.png",
         cta: "Consultar disponibilidad",
       },
       {

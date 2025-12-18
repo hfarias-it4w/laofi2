@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { FaArrowRight, FaChevronDown, FaChevronRight } from "react-icons/fa";
 
-const primaryImage = "http://localhost:3845/assets/cf048ee078da950f40fe1ebaad2cb09a9f43942c.png";
+const primaryImage = "/assets/cf048ee078da950f40fe1ebaad2cb09a9f43942c.png";
 const indicatorCount = 5;
 
 export default function ReservaPage() {

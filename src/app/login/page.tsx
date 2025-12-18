@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 
-const workspaceImage = "http://localhost:3845/assets/1770f4ac1152a70a157c5452373012a66c8a4621.png";
+const workspaceImage = "/assets/1770f4ac1152a70a157c5452373012a66c8a4621.png";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

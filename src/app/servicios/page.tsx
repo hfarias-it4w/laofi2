@@ -16,17 +16,17 @@ import { MdKitchen, MdLock, MdOutlineCleaningServices } from "react-icons/md";
 import { PiCoffeeBold, PiUsersThreeFill } from "react-icons/pi";
 import { TbBuildingSkyscraper } from "react-icons/tb";
 
-const heroImage = "http://localhost:3845/assets/ef4f6eb3143746c9fa2a3a07fe919842e92c98ac.png";
-const heroOverlay = "http://localhost:3845/assets/5d56f887b01e7e2a4182728ed407b7807c0ad0dd.png";
+const heroImage = "/assets/ef4f6eb3143746c9fa2a3a07fe919842e92c98ac.png";
+const heroOverlay = "/assets/5d56f887b01e7e2a4182728ed407b7807c0ad0dd.png";
 const spaceImages = {
-  shared: "http://localhost:3845/assets/80ef31a507e6794bd35596076285cbdf1466b2aa.png",
-  private: "http://localhost:3845/assets/1770f4ac1152a70a157c5452373012a66c8a4621.png",
-  meeting: "http://localhost:3845/assets/536e979a6f5da93dd0033f1a6249b785f9eacabc.png",
-  virtual: "http://localhost:3845/assets/15c33a7e098e6e3c6236043dcc4e88b921f73834.png",
-  custom: "http://localhost:3845/assets/2dbd54ff1074508bbef80ff949a8b3b8f3e7971d.png",
+  shared: "/assets/80ef31a507e6794bd35596076285cbdf1466b2aa.png",
+  private: "/assets/1770f4ac1152a70a157c5452373012a66c8a4621.png",
+  meeting: "/assets/536e979a6f5da93dd0033f1a6249b785f9eacabc.png",
+  virtual: "/assets/15c33a7e098e6e3c6236043dcc4e88b921f73834.png",
+  custom: "/assets/2dbd54ff1074508bbef80ff949a8b3b8f3e7971d.png",
 };
 
-const devicesMock = "http://localhost:3845/assets/072267707a5455bd702aa5a4fe029ae8248ccd1c.png";
+const devicesMock = "/assets/072267707a5455bd702aa5a4fe029ae8248ccd1c.png";
 
 type ServiceFeature = {
   title: string;

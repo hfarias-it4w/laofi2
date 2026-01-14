@@ -31,14 +31,14 @@ type ContactPreviewData = {
   html: string;
 };
 
-const heroImage = "/assets/ef4f6eb3143746c9fa2a3a07fe919842e92c98ac.png";
-const mapImage = "/assets/4e3ff1c2363ffb610f692c5a9c3936dc7ef76a1e.png";
+const heroImage = "/assets/ef4f6eb3143746c9fa2a3a07fe919842e92c98ac.jpg";
+const mapImage = "/assets/mapa.png";
 const logoPartners = [
-  "/assets/a4dcd49e038abf0396bc0713086563430cc74b3b.png",
-  "/assets/e246b60348fdce321368209f3897d7f4741113c8.png", 
-  "/assets/4c465a6b513e7f549af5fd2327bc7a46d2d603a7.png",
-  "/assets/536041cd5b491d20f950cc9e704e7740cb22e6a7.png",
-  "/assets/0425ce4f6f05a49df1664f163a652d871a14d630.png",
+  "/assets/logo1.png",
+  "/assets/logo2.png", 
+  "/assets/logo-it4w.png",
+  "/assets/logo4.png",
+  "/assets/logo5.png",
 ];
 
 export default function Home() {
@@ -101,7 +101,7 @@ export default function Home() {
         title: "Oficina a medida",
         description:
           "Diseñamos, equipamos y operamos un espacio exclusivo para tu compañía.",
-        image: "/assets/9191df615a2751b51b9dc87815d32c883a24e6be.png",
+        image: "/assets/espacio_4.png",
         cta: "Hablemos",
         dark: true,
       },

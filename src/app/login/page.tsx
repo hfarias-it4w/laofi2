@@ -44,36 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-screen-xl items-center justify-between px-6 py-4">
-          <Link href="/" aria-label="Ir al inicio" className="flex items-center">
-            <Image src="/logolaofi.svg" alt="La Ofi" width={112} height={40} priority />
-          </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-neutral-700 md:flex">
-            <Link className="hover:text-neutral-900" href="/">
-              Inicio
-            </Link>
-            <Link className="hover:text-neutral-900" href="/servicios">
-              Servicios
-            </Link>
-            <Link className="hover:text-neutral-900" href="/reserva">
-              Reservá tu espacio
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/reserva#reserva-form"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#fdca00] px-4 py-2 text-sm font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00]"
-            >
-              Contactanos
-              <FaArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto flex max-w-screen-xl flex-col gap-16 px-6 pb-24 pt-20 lg:flex-row lg:items-center">
+    <main className="mx-auto flex max-w-screen-xl flex-col gap-16 px-6 pb-24 pt-20 lg:flex-row lg:items-center">
         <section className="flex-1 space-y-6">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#fdca00]">Ingresá a la app</p>
           <h1 className="text-4xl font-black uppercase leading-tight tracking-tight text-neutral-900 md:text-6xl">
@@ -159,6 +130,5 @@ export default function LoginPage() {
           </form>
         </section>
       </main>
-    </div>
   );
 }

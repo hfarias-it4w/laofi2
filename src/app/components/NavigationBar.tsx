@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
-import { FaSignOutAlt } from "react-icons/fa";
-import { signOut } from "next-auth/react";
+import { FaSignOutAlt, FaArrowRight } from "react-icons/fa";
+import { signOut, useSession } from "next-auth/react";
 
 interface NavLink {
   href: string;
@@ -14,49 +14,133 @@ interface NavLink {
 
 interface NavigationBarProps {
   variant: "authenticated" | "marketing";
-  session?: { user?: { name?: string | null; email?: string | null; role?: string } } | null;
   pathname?: string | null;
 }
 
-export default function NavigationBar({ variant, session, pathname }: NavigationBarProps) {
+export default function NavigationBar({ variant, pathname }: NavigationBarProps) {
   if (variant === "marketing") {
     return <MarketingNavigation pathname={pathname} />;
   }
 
-  return <AuthenticatedNavigation session={session} pathname={pathname} />;
+  return <AuthenticatedNavigation pathname={pathname} />;
 }
 
 function MarketingNavigation({ pathname }: { pathname?: string | null }) {
+  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const user = session?.user;
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  const navLinks: NavLink[] = [
-    { href: "/", label: "Inicio" },
-    { href: "/servicios", label: "Servicios" },
-    { href: "/reserva", label: "Reservá tu espacio" },
-  ];
+  // Determinar enlaces de navegación según la ruta
+  const navLinks = useMemo(() => {
+    if (pathname === "/") {
+      // Página principal
+      const links: NavLink[] = [
+        { href: "#espacios", label: "Espacios" },
+        { href: "#servicios", label: "Servicios" },
+        { href: "#ubicacion", label: "Ubicaciones" },
+        { href: "#testimonios", label: "Testimonios" },
+      ];
+
+      // Si está autenticado, agregar enlaces adicionales
+      if (session) {
+        links.push(
+          { href: "/pedidos/realizar", label: "Realizar pedido" },
+          { href: "/pedidos/historial", label: "Historial" }
+        );
+
+        if (isAdmin) {
+          // Insertar "Panel" antes de "Historial"
+          links.splice(links.length - 1, 0, { href: "/pedidos", label: "Panel" });
+        }
+      }
+
+      return links;
+    } else {
+      // Otras páginas de marketing
+      return [
+        { href: "/", label: "Inicio" },
+        { href: "/servicios", label: "Servicios" },
+        { href: "/reserva", label: "Reservá tu espacio" },
+      ];
+    }
+  }, [pathname, session, isAdmin]);
+
+  // Determinar CTAs según autenticación y ruta
+  const primaryCta = useMemo(() => {
+    if (!user) {
+      return { href: "/login", label: "Iniciar sesión" };
+    }
+    if (isAdmin) {
+      return { href: "/pedidos", label: "Ir al panel" };
+    }
+    return { href: "/pedidos/realizar", label: "Pedir café" };
+  }, [user, isAdmin]);
+
+  const secondaryCta = useMemo(() => {
+    // Página principal
+    if (pathname === "/") {
+      return user
+        ? { href: "/pedidos/historial", label: "Historial" }
+        : { href: "#contacto", label: "Contactanos" };
+    }
+
+    // Página de reserva
+    if (pathname === "/reserva") {
+      return { href: "#reserva-form", label: "Contactanos" };
+    }
+
+    // Página de login
+    if (pathname === "/login") {
+      return { href: "/reserva#reserva-form", label: "Contactanos" };
+    }
+
+    // Página de register
+    if (pathname === "/register") {
+      return { href: "/login", label: "Iniciar sesión" };
+    }
+
+    // Otras páginas (/servicios, etc.)
+    return user
+      ? { href: "/pedidos/historial", label: "Historial" }
+      : { href: "#contacto", label: "Contactanos" };
+  }, [pathname, user]);
+
+  // Determinar si un enlace está activo
+  const isActive = (href: string) => {
+    if (href.startsWith("#")) {
+      return false; // Los anchors no se marcan como activos
+    }
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname?.startsWith(href);
+  };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-4 px-6 py-4">
+    <header className="sticky top-0 z-30 border-b border-neutral-200 bg-neutral-50/95 backdrop-blur">
+      <div className="mx-auto flex max-w-screen-xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="Ir al inicio">
-          <Image src="/logolaofi.svg" alt="Logo La Ofi" width={140} height={40} priority />
+          <Image src="/logolaofi.svg" alt="La Ofi" width={112} height={40} priority />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-2 md:flex">
+        <nav className="hidden items-center gap-8 text-sm font-medium text-neutral-700 md:flex">
           {navLinks.map((link) => {
-            const active = pathname === link.href;
+            const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-1 text-sm font-semibold transition ${
-                  active ? "bg-[#fae79a] text-neutral-900" : "text-neutral-600 hover:text-neutral-900"
+                className={`${
+                  active
+                    ? "rounded-lg bg-[#fae79a] px-3 py-1 text-neutral-900"
+                    : "hover:text-neutral-900"
                 }`}
               >
                 {link.label}
@@ -65,19 +149,25 @@ function MarketingNavigation({ pathname }: { pathname?: string | null }) {
           })}
         </nav>
 
-        {/* CTAs */}
+        {/* CTAs Desktop */}
         <div className="flex items-center gap-3">
+          {/* CTA Secundario - Ocultar en /register si no hay usuario */}
+          {(pathname !== "/register" || user) && (
+            <Link
+              href={secondaryCta.href}
+              className="hidden rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-900 transition hover:border-neutral-900 hover:text-neutral-900 md:inline"
+            >
+              {secondaryCta.label}
+            </Link>
+          )}
+
+          {/* CTA Primario */}
           <Link
-            href="/login"
-            className="hidden rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-900 transition hover:border-neutral-900 hover:text-neutral-900 md:inline-flex"
+            href={primaryCta.href}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#fdca00] px-4 py-2 text-sm font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00]"
           >
-            Iniciar sesión
-          </Link>
-          <Link
-            href="/register"
-            className="hidden items-center gap-2 rounded-lg bg-[#fdca00] px-4 py-2 text-sm font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00] md:inline-flex"
-          >
-            App Café
+            {primaryCta.label}
+            <FaArrowRight className="h-4 w-4" />
           </Link>
 
           {/* Mobile Menu Button */}
@@ -102,6 +192,7 @@ function MarketingNavigation({ pathname }: { pathname?: string | null }) {
             className="absolute right-0 top-0 flex h-full w-80 max-w-[80vw] flex-col gap-6 overflow-y-auto bg-white p-6 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.45)]"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Header del menú móvil */}
             <div className="flex items-center justify-between">
               <p className="text-base font-semibold text-neutral-900">Menú</p>
               <button
@@ -113,15 +204,18 @@ function MarketingNavigation({ pathname }: { pathname?: string | null }) {
               </button>
             </div>
 
+            {/* Enlaces de navegación */}
             <nav className="flex flex-col gap-2">
               {navLinks.map((link) => {
-                const active = pathname === link.href;
+                const active = isActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
-                      active ? "bg-[#fdca00] text-neutral-900" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-900/5"
+                      active
+                        ? "bg-[#fdca00] text-neutral-900"
+                        : "bg-neutral-100 text-neutral-700 hover:bg-neutral-900/5"
                     }`}
                   >
                     {link.label}
@@ -130,18 +224,25 @@ function MarketingNavigation({ pathname }: { pathname?: string | null }) {
               })}
             </nav>
 
+            {/* CTAs del menú móvil */}
             <div className="mt-auto flex flex-col gap-3">
+              {/* CTA Secundario */}
+              {(pathname !== "/register" || user) && (
+                <Link
+                  href={secondaryCta.href}
+                  className="inline-flex items-center justify-center rounded-lg border border-neutral-900 px-4 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
+                >
+                  {secondaryCta.label}
+                </Link>
+              )}
+
+              {/* CTA Primario */}
               <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-lg border border-neutral-900 px-4 py-3 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                href="/register"
+                href={primaryCta.href}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#fdca00] px-4 py-3 text-sm font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00]"
               >
-                App Café
+                {primaryCta.label}
+                <FaArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -152,12 +253,11 @@ function MarketingNavigation({ pathname }: { pathname?: string | null }) {
 }
 
 function AuthenticatedNavigation({
-  session,
   pathname,
 }: {
-  session?: { user?: { name?: string | null; email?: string | null; role?: string } } | null;
   pathname?: string | null;
 }) {
+  const { data: session } = useSession();
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isAdmin = session?.user?.role === "admin";

@@ -5,7 +5,8 @@ import { getSocket } from "@/lib/socketClient";
 import { useSession } from "next-auth/react";
 
 export default function AdminNotificationListener() {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   useEffect(() => {
     if (session?.user?.role !== "admin") return;
     const socket = getSocket();

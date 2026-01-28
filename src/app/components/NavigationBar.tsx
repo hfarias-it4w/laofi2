@@ -26,7 +26,8 @@ export default function NavigationBar({ variant, pathname }: NavigationBarProps)
 }
 
 function MarketingNavigation({ pathname }: { pathname?: string | null }) {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const [mobileOpen, setMobileOpen] = useState(false);
   const user = session?.user;
   const isAdmin = user?.role === "admin";
@@ -257,7 +258,8 @@ function AuthenticatedNavigation({
 }: {
   pathname?: string | null;
 }) {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isAdmin = session?.user?.role === "admin";

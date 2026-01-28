@@ -5,7 +5,8 @@ import { useMemo } from "react";
 import Link from "next/link";
 
 export default function MarketingFooter() {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const isAdmin = session?.user?.role === "admin";
   const year = new Date().getFullYear();
 

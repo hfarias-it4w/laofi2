@@ -80,3 +80,47 @@ export const sendContactEmail = async (payload: ContactEmailPayload) => {
     html: content.html,
   });
 };
+
+export type ReservationEmailPayload = {
+  name: string;
+  email: string;
+  phone?: string;
+  message?: string;
+  visit: "si" | "no";
+};
+
+export const buildReservationEmail = ({ name, email, phone, message, visit }: ReservationEmailPayload): ContactEmailContent => {
+  const subject = `Nueva solicitud de reserva/visita: ${name}`;
+  const phoneLine = phone ? `\nTeléfono: ${phone}` : "";
+  const visitLine = `\n¿Programar visita?: ${visit === "si" ? "Sí" : "No"}`;
+  const msgLine = message ? `\n\nMensaje:\n${message}` : "";
+  const text = `Nombre: ${name}\nCorreo: ${email}${phoneLine}${visitLine}${msgLine}`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #1f2937;">
+      <h2 style="color: #111827;">Nueva solicitud de reserva/visita</h2>
+      <p><strong>Nombre:</strong> ${name}</p>
+      <p><strong>Correo:</strong> ${email}</p>
+      ${phone ? `<p><strong>Teléfono:</strong> ${phone}</p>` : ""}
+      <p><strong>¿Programar visita?</strong> ${visit === "si" ? "Sí" : "No"}</p>
+      ${message ? `<p><strong>Mensaje:</strong></p><p>${String(message).replace(/\n/g, "<br />")}</p>` : ""}
+    </div>
+  `;
+  return { subject, text, html };
+};
+
+export const sendReservationEmail = async (payload: ReservationEmailPayload) => {
+  const transporter = await getTransporter();
+  const content = buildReservationEmail(payload);
+
+  await transporter.sendMail({
+    from: {
+      name: "La Ofi Reservas",
+      address: SMTP_USER,
+    },
+    to: CONTACT_FORM_RECIPIENT,
+    replyTo: payload.email,
+    subject: content.subject,
+    text: content.text,
+    html: content.html,
+  });
+};

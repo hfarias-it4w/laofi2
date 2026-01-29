@@ -6,12 +6,19 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { FaArrowRight, FaChevronDown, FaChevronRight } from "react-icons/fa";
 
-const primaryImage = "/assets/cf048ee078da950f40fe1ebaad2cb09a9f43942c.png";
-const indicatorCount = 5;
+const primaryImage = "/assets/reserva-page.png";
+// Gallery can be extended; controls show only if multiple images
+const galleryImages = [primaryImage];
 
 export default function ReservaPage() {
   const { data: session } = useSession();
   const [visitPreference, setVisitPreference] = useState("si");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle"|"loading"|"success"|"error">("idle");
+  const [feedback, setFeedback] = useState<string|null>(null);
   const user = session?.user;
 
   const primaryCta = user
@@ -37,6 +44,33 @@ export default function ReservaPage() {
           <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
             <form
               id="reserva-form"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setStatus("loading");
+                setFeedback(null);
+                try {
+                  const res = await fetch("/api/reserva", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, phone, message, visit: visitPreference }),
+                  });
+                  if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error((data as any).message || "No pudimos procesar tu solicitud");
+                  }
+                  const data = await res.json();
+                  setStatus("success");
+                  setFeedback("Recibimos tu solicitud. Te contactaremos a la brevedad.");
+                  // limpiar
+                  setName("");
+                  setEmail("");
+                  setPhone("");
+                  setMessage("");
+                } catch (err) {
+                  setStatus("error");
+                  setFeedback(err instanceof Error ? err.message : "Error desconocido");
+                }
+              }}
               className="flex flex-col gap-6 rounded-2xl border border-neutral-200 bg-white p-8 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
             >
               <div className="space-y-3">
@@ -64,6 +98,8 @@ export default function ReservaPage() {
                     name="name"
                     required
                     placeholder="Ingresa tu nombre"
+                    value={name}
+                    onChange={(e)=>setName(e.target.value)}
                     className="rounded-lg border border-neutral-200 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#fdca00] focus:outline-none"
                   />
                 </label>
@@ -74,6 +110,8 @@ export default function ReservaPage() {
                     name="email"
                     required
                     placeholder="nombre@empresa.com"
+                    value={email}
+                    onChange={(e)=>setEmail(e.target.value)}
                     className="rounded-lg border border-neutral-200 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#fdca00] focus:outline-none"
                   />
                 </label>
@@ -83,6 +121,8 @@ export default function ReservaPage() {
                     type="tel"
                     name="phone"
                     placeholder="Ej: +54 9 11 1234 5678"
+                    value={phone}
+                    onChange={(e)=>setPhone(e.target.value)}
                     className="rounded-lg border border-neutral-200 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#fdca00] focus:outline-none"
                   />
                 </label>
@@ -92,6 +132,8 @@ export default function ReservaPage() {
                     name="message"
                     rows={4}
                     placeholder="¿Cuántas personas son? ¿Qué tipo de espacio buscan?"
+                    value={message}
+                    onChange={(e)=>setMessage(e.target.value)}
                     className="rounded-lg border border-neutral-200 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#fdca00] focus:outline-none"
                   />
                 </label>
@@ -125,40 +167,52 @@ export default function ReservaPage() {
                 </label>
               </fieldset>
 
+              {feedback && (
+                <div className={`rounded-lg border px-4 py-3 text-sm ${status==="success"?"border-green-200 bg-green-50 text-green-700":"border-red-200 bg-red-50 text-red-600"}`}>
+                  {feedback}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#fdca00] px-6 py-3 text-base font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00]"
+                disabled={status==="loading"}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#fdca00] px-6 py-3 text-base font-semibold text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] transition hover:bg-[#f1be00] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Reservar espacio
                 <FaArrowRight className="h-4 w-4" />
               </button>
             </form>
 
-            <div className="relative overflow-hidden rounded-2xl border border-neutral-200">
-              <div className="relative h-[520px] w-full">
+            <div className="relative overflow-hidden rounded-2xl border border-neutral-200 min-h-[520px] md:min-h-[560px] lg:min-h-[680px]">
+              <div className="relative w-full h-full">
                 <Image
-                  src={primaryImage}
+                  src={galleryImages[0]}
                   alt="Personas trabajando en La Ofi"
                   fill
+                  sizes="100vw"
                   className="object-cover"
                   unoptimized
                 />
               </div>
-              <button
-                type="button"
-                aria-label="Siguiente imagen"
-                className="absolute right-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-neutral-900 shadow-md transition hover:bg-white"
-              >
-                <FaChevronRight className="h-4 w-4" />
-              </button>
-              <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
-                {Array.from({ length: indicatorCount }).map((_, index) => (
-                  <span
-                    key={index}
-                    className={`h-2 w-2 rounded-full ${index === 0 ? "bg-white" : "bg-white/50"}`}
-                  />
-                ))}
-              </div>
+              {galleryImages.length > 1 && (
+                <button
+                  type="button"
+                  aria-label="Siguiente imagen"
+                  className="absolute right-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-neutral-900 shadow-md transition hover:bg-white"
+                >
+                  <FaChevronRight className="h-4 w-4" />
+                </button>
+              )}
+              {galleryImages.length > 1 && (
+                <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+                  {galleryImages.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`h-2 w-2 rounded-full ${index === 0 ? "bg-white" : "bg-white/50"}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>

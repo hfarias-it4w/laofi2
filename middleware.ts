@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const PUBLIC_PATHS = ["/login", "/register", "/api/auth", "/favicon.ico", "/_next", "/public"];
+const PUBLIC_PATHS = ["/login", "/register", "/api/auth", "/api/contact", "/api/reserva", "/favicon.ico", "/_next", "/public"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -25,5 +25,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|_next|favicon.ico|public|api/register).*)"],
+  matcher: ["/((?!api/auth|_next|favicon.ico|public|api/register|api/contact|api/reserva).*)"],
 };

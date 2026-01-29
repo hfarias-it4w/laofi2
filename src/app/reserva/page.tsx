@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { FaArrowRight, FaChevronDown, FaChevronRight } from "react-icons/fa";
@@ -21,11 +20,7 @@ export default function ReservaPage() {
   const [feedback, setFeedback] = useState<string|null>(null);
   const user = session?.user;
 
-  const primaryCta = user
-    ? user.role === "admin"
-      ? { href: "/pedidos", label: "Ir al panel" }
-      : { href: "/pedidos/realizar", label: "Pedir café" }
-    : { href: "/login", label: "Iniciar sesión" };
+  // CTA derivada del usuario (no utilizada en esta vista por ahora)
 
   return (
     <main>
@@ -55,10 +50,15 @@ export default function ReservaPage() {
                     body: JSON.stringify({ name, email, phone, message, visit: visitPreference }),
                   });
                   if (!res.ok) {
-                    const data = await res.json().catch(() => ({}));
-                    throw new Error((data as any).message || "No pudimos procesar tu solicitud");
+                    const data = await res.json().catch(() => null) as unknown;
+                    let errMsg = "No pudimos procesar tu solicitud";
+                    if (data && typeof data === "object" && "message" in data) {
+                      const msg = (data as { message?: unknown }).message;
+                      if (typeof msg === "string") errMsg = msg;
+                    }
+                    throw new Error(errMsg);
                   }
-                  const data = await res.json();
+                  // No necesitamos procesar el cuerpo en éxito
                   setStatus("success");
                   setFeedback("Recibimos tu solicitud. Te contactaremos a la brevedad.");
                   // limpiar

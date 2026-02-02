@@ -39,7 +39,7 @@ function FooterWithAccount() {
     ];
     if (isAdmin) {
       links.splice(1, 0, { href: "/pedidos", label: "Panel" });
-      links.push({ href: "/productos", label: "Productos" }, { href: "/clientes", label: "Usuarios" });
+      links.push({ href: "/productos", label: "Productos" }, { href: "/clientes", label: "Usuarios" }, { href: "/interno", label: "[INTERNO]" });
     }
     return links;
   }, [isAdmin]);

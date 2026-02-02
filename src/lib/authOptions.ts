@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { dbConnect } from "./mongodb";
 import { User } from "@/models/User";
+import { isAdminEmail } from "./adminEmails";
 
 const rawNextAuthSecret = process.env.NEXTAUTH_SECRET?.trim();
 const rawAuthSecret = process.env.AUTH_SECRET?.trim();
@@ -30,11 +31,19 @@ export const authOptions: NextAuthOptions = {
         if (!user) return null;
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
+
+        // Sync admin role if email in whitelist
+        let role = user.role || "user";
+        if (isAdminEmail(credentials.email) && role !== "admin") {
+          await User.updateOne({ _id: user._id }, { role: "admin" });
+          role = "admin";
+        }
+
         return {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
-          role: user.role || "user",
+          role,
         } satisfies NextAuthUser & { role: string; id: string };
       }
     })

@@ -10,6 +10,9 @@ interface NavLink {
   href: string;
   label: string;
   onClick?: () => void;
+  isAdmin?: boolean;
+  external?: boolean;
+  isCTA?: boolean;
 }
 
 interface NavigationBarProps {
@@ -20,25 +23,35 @@ export default function NavigationBar({ pathname }: NavigationBarProps) {
   const sessionData = useSession();
   const session = sessionData?.data;
   const [mobileOpen, setMobileOpen] = useState(false);
-  const user = session?.user;
+  const user = session?.user as (typeof session)["user"] & { role?: string };
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
   // Links según autenticación
+  const isAdmin = user?.role === "admin";
   const navLinks: NavLink[] = user
     ? [
         { href: "/", label: "Inicio" },
         { href: "/servicios", label: "Servicios" },
         { href: "/reserva", label: "Reservá tu espacio" },
         { href: "/pedidos/realizar", label: "Pedir Cafe" },
+        ...(isAdmin
+          ? [{ href: "/interno", label: "Interno", isAdmin: true }]
+          : []),
         { href: "#", label: "Cerrar sesión", onClick: () => signOut() },
       ]
     : [
         { href: "/", label: "Inicio" },
         { href: "/servicios", label: "Servicios" },
         { href: "/reserva", label: "Reservá tu espacio" },
+        {
+          href: "https://meetings.hubspot.com/bernardo-bustamante",
+          label: "Conoce La Ofi",
+          external: true,
+          isCTA: true,
+        },
         { href: "/login", label: "Iniciar sesión" },
       ];
 
@@ -55,7 +68,13 @@ export default function NavigationBar({ pathname }: NavigationBarProps) {
       <div className="mx-auto flex max-w-screen-xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="Ir al inicio">
-          <Image src="/logolaofi.svg" alt="La Ofi" width={112} height={40} priority />
+          <Image
+            src="/logolaofi.svg"
+            alt="La Ofi"
+            width={112}
+            height={40}
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -77,10 +96,16 @@ export default function NavigationBar({ pathname }: NavigationBarProps) {
               <Link
                 key={link.href}
                 href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
                 className={`${
-                  active
-                    ? "rounded-lg bg-[#fae79a] px-3 py-1 text-neutral-900"
-                    : "hover:text-neutral-900"
+                  link.isAdmin
+                    ? "rounded-full bg-[#13B29F] px-4 py-1 text-white font-semibold hover:bg-[#119e8d]"
+                    : link.isCTA
+                      ? "rounded-full bg-[#fdca00] px-4 py-1.5 text-neutral-900 font-semibold hover:bg-[#e6b800] shadow-sm"
+                      : active
+                        ? "rounded-lg bg-[#fae79a] px-3 py-1 text-neutral-900"
+                        : "hover:text-neutral-900"
                 }`}
               >
                 {link.label}
@@ -141,10 +166,16 @@ export default function NavigationBar({ pathname }: NavigationBarProps) {
                   <Link
                     key={link.href}
                     href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
                     className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
-                      active
-                        ? "bg-[#fdca00] text-neutral-900"
-                        : "bg-neutral-100 text-neutral-700 hover:bg-neutral-900/5"
+                      link.isAdmin
+                        ? "rounded-full bg-[#13B29F] text-white hover:bg-[#119e8d]"
+                        : link.isCTA
+                          ? "rounded-full bg-[#fdca00] text-neutral-900 hover:bg-[#e6b800] shadow-sm"
+                          : active
+                            ? "bg-[#fdca00] text-neutral-900"
+                            : "bg-neutral-100 text-neutral-700 hover:bg-neutral-900/5"
                     }`}
                   >
                     {link.label}

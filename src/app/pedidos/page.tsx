@@ -117,6 +117,7 @@ export default function PedidosPage() {
           <option value="">Todos los estados</option>
           <option value="pendiente">Pendiente</option>
           <option value="preparado">Preparado</option>
+          <option value="entregado">Entregado</option>
           <option value="cancelado">Cancelado</option>
         </select>
         <select
@@ -174,6 +175,9 @@ export default function PedidosPage() {
               } else if (p.estado === "preparado") {
                 estadoColor = "bg-green-100 text-green-800";
                 estadoIcon = <FaCoffee className="inline mr-1" />;
+              } else if (p.estado === "entregado") {
+                estadoColor = "bg-blue-100 text-blue-800";
+                estadoIcon = <FaCoffee className="inline mr-1" />;
               } else if (p.estado === "cancelado") {
                 estadoColor = "bg-red-100 text-red-700";
                 estadoIcon = <BsFillExclamationOctagonFill className="inline mr-1" />;
@@ -207,6 +211,7 @@ export default function PedidosPage() {
                     >
                       <option value="pendiente">Pendiente</option>
                       <option value="preparado">Preparado</option>
+                      <option value="entregado">Entregado</option>
                       <option value="cancelado">Cancelado</option>
                     </select>
                   </td>

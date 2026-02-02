@@ -23,7 +23,7 @@ export default function NavigationBar({ pathname }: NavigationBarProps) {
   const sessionData = useSession();
   const session = sessionData?.data;
   const [mobileOpen, setMobileOpen] = useState(false);
-  const user = session?.user as (typeof session)["user"] & { role?: string };
+  const user = session?.user as { name?: string | null; email?: string | null; role?: string } | undefined;
 
   useEffect(() => {
     setMobileOpen(false);

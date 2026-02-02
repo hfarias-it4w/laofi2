@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 // useSession usado en FooterWithAccount
 import Link from "next/link";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,9 +52,12 @@ function FooterWithAccount() {
       <div className="mx-auto flex max-w-screen-xl flex-col gap-10 px-4 py-12 md:flex-row md:justify-between md:px-6">
         <div className="max-w-sm space-y-4">
           <div className="flex items-center gap-3">
-            <span className="rounded-full bg-neutral-900 px-3 py-1 text-xs font-semibold tracking-[0.3em] text-white">
-              LAOFI
-            </span>
+            <Image
+              src="/logolaofi.svg"
+              alt="La Ofi"
+              width={80}
+              height={28}
+            />
             <p className="text-sm font-semibold text-neutral-900">Pedidos de café para la comunidad.</p>
           </div>
           <p className="text-sm text-neutral-600">

@@ -101,9 +101,8 @@ export default function Home() {
         title: "Oficina a medida",
         description:
           "Diseñamos, equipamos y operamos un espacio exclusivo para tu compañía.",
-        image: "/assets/espacio_4.png",
+        image: "/assets/oficina_a_medida.png",
         cta: "Hablemos",
-        dark: true,
       },
     ],
     [],

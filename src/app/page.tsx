@@ -342,9 +342,7 @@ export default function Home() {
             {spaces.map((space, index) => (
               <article
                 key={space.title}
-                className={`flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${
-                  space.dark ? "bg-neutral-900 text-white" : ""
-                }`}
+                className="flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
               >
                 <div className="relative h-56">
                   <Image
@@ -364,19 +362,15 @@ export default function Home() {
                 </div>
                 <div className="flex flex-1 flex-col gap-4 px-6 pb-6 pt-8">
                   <h3 className="text-xl font-semibold">{space.title}</h3>
-                  <p
-                    className={`flex-1 text-sm ${space.dark ? "text-neutral-300" : "text-neutral-600"}`}
-                  >
+                  <p className="flex-1 text-sm text-neutral-600">
                     {space.description}
                   </p>
                   <Link
                     href={primaryCta.href}
                     className={`inline-flex items-center gap-2 self-start rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                      space.dark
-                        ? "bg-white text-neutral-900 hover:bg-neutral-200"
-                        : space.highlight
-                          ? "bg-[#fdca00] text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] hover:bg-[#f1be00]"
-                          : "border border-neutral-300 text-neutral-900 hover:border-neutral-900"
+                      space.highlight
+                        ? "bg-[#fdca00] text-neutral-900 shadow-[0_10px_40px_-10px_rgba(253,202,0,0.6)] hover:bg-[#f1be00]"
+                        : "border border-neutral-300 text-neutral-900 hover:border-neutral-900"
                     }`}
                   >
                     {space.cta}

@@ -365,7 +365,8 @@ export default function Home() {
                   <p className="flex-1 text-sm text-neutral-600">
                     {space.description}
                   </p>
-                  <Link
+                  {/* Cards Buttons */}
+                  {/* <Link
                     href={primaryCta.href}
                     className={`inline-flex items-center gap-2 self-start rounded-lg px-4 py-2 text-sm font-semibold transition ${
                       space.highlight
@@ -375,7 +376,7 @@ export default function Home() {
                   >
                     {space.cta}
                     <FaArrowRight className="h-4 w-4" />
-                  </Link>
+                  </Link> */}
                 </div>
               </article>
             ))}
